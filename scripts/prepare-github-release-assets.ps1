@@ -67,8 +67,12 @@ try {
     $evidencePath = Get-CurrentEvidenceDirectory -RequestedDirectory $EvidenceDirectory
     $summary = Get-Content -LiteralPath (Join-Path $evidencePath 'summary.json') -Raw | ConvertFrom-Json
     $installerHash = (Get-FileHash -LiteralPath $installer.FullName -Algorithm SHA256).Hash
-    if ($summary.version -ne $applicationVersion -or $summary.installerSha256 -ne $installerHash) {
-        throw '候选安装器与 Compatible 证据的版本或 SHA-256 不一致。请重新执行 npm run evidence。'
+    $sourceCommit = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or -not $sourceCommit) {
+        throw '无法读取当前 Git 提交，拒绝准备发布资产。'
+    }
+    if ($summary.version -ne $applicationVersion -or $summary.installerSha256 -ne $installerHash -or $summary.sourceCommit -ne $sourceCommit) {
+        throw '候选安装器与 Compatible 证据的版本、SHA-256 或源码提交不一致。请重新执行 npm run evidence。'
     }
 
     if (Test-Path -LiteralPath $stageDirectory) {
@@ -90,7 +94,7 @@ try {
         product = 'UnicodeArt App'
         version = $applicationVersion
         coreRange = $packageManifest.dependencies.'unicode-art-js'
-        sourceCommit = (& git rev-parse HEAD).Trim()
+        sourceCommit = $sourceCommit
         evidenceDirectory = Split-Path -Leaf $evidencePath
         generatedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
         assets = @($assetFiles | ForEach-Object {

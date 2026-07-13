@@ -33,6 +33,10 @@ function Invoke-ProjectTool {
 Push-Location $projectRoot
 try {
     Invoke-ProjectTool 'npm' @('run', 'release:verify')
+    $sourceCommit = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or -not $sourceCommit) {
+        throw '无法读取当前 Git 提交，拒绝生成发布证据。'
+    }
 
     if (-not $SkipBuild) {
         Invoke-ProjectTool 'npm' @('run', 'check')
@@ -92,6 +96,7 @@ try {
         generatedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
         product = 'UnicodeArt App'
         version = $applicationVersion
+        sourceCommit = $sourceCommit
         npmLockSha256 = (Get-FileHash -Algorithm SHA256 package-lock.json).Hash
         cargoLockSha256 = (Get-FileHash -Algorithm SHA256 src-tauri/Cargo.lock).Hash
         binary = 'src-tauri/target/release/tauri-uniart.exe'

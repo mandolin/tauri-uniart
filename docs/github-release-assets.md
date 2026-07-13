@@ -15,7 +15,7 @@
 npm run release:assets
 ```
 
-脚本会严格匹配 `package.json` 当前版本，校验安装器 SHA-256 与证据中的 `summary.json` 相同，然后生成：
+脚本会严格匹配 `package.json` 当前版本，校验安装器 SHA-256 和源码提交与证据中的 `summary.json` 相同，然后生成：
 
 ```text
 output/release-assets/<version>/
