@@ -14,10 +14,12 @@ mise exec -- npm run evidence
 命令会先执行 TypeScript、项目格式测试和前端构建，再生成 Tauri Windows 可执行文件，并把以下文件写入
 被 Git 忽略的 `output/compatible-evidence/<timestamp>/`：
 
+- `LICENSE` 与 `THIRD_PARTY_NOTICES.md`：随候选安装器提供的许可证材料副本。
 - `release-contract.json`：应用版本、Core semver 范围和 lockfile 实际解析版本。
 - `node-runtime.cyclonedx.json`：Node 运行时依赖 SBOM。
 - `cargo-metadata.json`：完整 Rust 依赖、版本、来源和许可证字段快照。
 - `summary.json`：Node/Cargo lockfile 以及候选 `.exe` 的 SHA-256。
+- `release-assets.json` 与 `SHA256SUMS.txt`：安装器、许可证材料和依赖证据的发布资产清单与 SHA-256。
 
 `npm run evidence -- -SkipBuild` 仅适用于已完成同一工作树构建后的重新采集，不得替代正式候选构建。
 
@@ -28,7 +30,7 @@ mise exec -- npm run evidence
 
 1. 检查 Node SBOM 和 Cargo metadata，确认新增依赖的许可证、来源和平台二进制与 Compatible 档位一致。
 2. 为候选安装器或压缩包整理适用的 NOTICE、许可证文本和第三方归属；不要把这些材料回写进 Clean Core 的 npm 包。
-3. 对 Windows 候选产物进行恶意软件扫描，记录扫描时间、工具版本、结果和二进制 SHA-256。
+3. 对 Windows 候选产物进行恶意软件扫描，记录扫描时间、工具版本、结果和安装器 SHA-256。
 4. 在干净 Windows 环境验证安装、启动、项目打开/保存、TXT/HTML 导出和卸载。
 5. 复查应用 capability：只能有打开/保存、显式选择文件的读写和应用私有 `workspace-state.json` 草稿文件；不得出现 shell、任意目录扫描、远程导航或自动读取历史图片。
 

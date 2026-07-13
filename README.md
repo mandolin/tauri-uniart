@@ -34,15 +34,17 @@ mise exec -- npm run release:verify
 mise exec -- npm run tauri:build
 ```
 
-`tauri:build` 当前仅生成可执行文件，不生成安装器。
+`tauri:build` 生成 Windows x64 的 NSIS 安装器。无安装器调试构建可使用 `npm run tauri:build:binary`。
 
 ## 版本与候选构建
 
 `package.json`、`src-tauri/Cargo.toml`、`src-tauri/tauri.conf.json` 和两个 lockfile 必须保持同一应用版本。
 `npm run release:verify` 会验证这一契约，并确认已锁定的 `unicode-art-js` 与声明的 Core 版本范围一致。
 
-仓库的 `Windows Candidate Check` 会在 Windows runner 上执行干净安装、测试、无安装器构建和 Compatible 证据采集，
-再把候选 `.exe` 与证据作为短期 Actions artifact 保存。该工作流不会创建 GitHub Release，也不会触发自动更新。
+仓库的 `Windows Candidate Check` 会在 Windows runner 上执行干净安装、测试、NSIS 构建和 Compatible 证据采集，
+再把候选安装器与证据作为短期 Actions artifact 保存。该工作流不会创建 GitHub Release，也不会触发自动更新。
+
+Beta 的安装、WebView2、未签名提示、项目兼容和问题反馈说明见 [Windows Beta 使用说明](docs/windows-beta.md)。
 
 ## 项目与文件访问
 

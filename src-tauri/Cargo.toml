@@ -1,6 +1,6 @@
 [package]
 name = "tauri-uniart"
-version = "0.1.0"
+version = "0.1.0-beta.1"
 description = "UnicodeArt App desktop workspace built with Tauri"
 authors = ["mandolin"]
 license = "MIT"
@@ -23,4 +23,3 @@ tauri-build = { version = "2.6.3", features = [] }
 tauri = { version = "2.11.5", features = [] }
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
-

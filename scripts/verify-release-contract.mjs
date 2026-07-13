@@ -61,14 +61,20 @@ function main() {
   const cargoManifest = readText("src-tauri/Cargo.toml");
   const cargoLock = readText("src-tauri/Cargo.lock");
   const tauriConfig = readJson("src-tauri/tauri.conf.json");
+  const appEntry = readText("src/main.ts");
   const applicationVersion = packageManifest.version;
   const coreRange = packageManifest.dependencies?.["unicode-art-js"];
   const lockedCore = packageLock.packages?.["node_modules/unicode-art-js"]?.version;
   const expectedCoreVersion = getExactCaretVersion(coreRange);
+  const appVersion = appEntry.match(/const APP_VERSION\s*=\s*"([^"]+)"/)?.[1];
+  const bundleTargets = Array.isArray(tauriConfig.bundle?.targets)
+    ? tauriConfig.bundle.targets
+    : [tauriConfig.bundle?.targets];
 
   expect(/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(applicationVersion || ""), "package.json version 必须是明确的语义化版本。");
   expect(readCargoPackageVersion(cargoManifest, "Cargo.toml") === applicationVersion, "Cargo.toml version 必须与 package.json 一致。");
   expect(tauriConfig.version === applicationVersion, "tauri.conf.json version 必须与 package.json 一致。");
+  expect(appVersion === applicationVersion, "src/main.ts 的 APP_VERSION 必须与 package.json 一致。");
   expect(
     readLockedCargoPackageVersion(cargoLock, "tauri-uniart") === applicationVersion,
     "Cargo.lock 中的 tauri-uniart version 必须与 package.json 一致。"
@@ -81,7 +87,12 @@ function main() {
     packageLock.packages?.[""]?.dependencies?.["unicode-art-js"] === coreRange,
     "package-lock.json 根依赖必须与 package.json 的 unicode-art-js 范围一致。"
   );
-  expect(tauriConfig.bundle?.active === false, "P2.5.2 仅允许无安装器候选构建，bundle.active 必须保持 false。");
+  expect(tauriConfig.bundle?.active === true, "Beta 候选必须启用安装器构建（bundle.active=true）。");
+  expect(bundleTargets.length === 1 && bundleTargets[0] === "nsis", "Beta 候选只能构建 x64 NSIS 安装器。");
+  expect(
+    tauriConfig.bundle?.windows?.webviewInstallMode?.type === "downloadBootstrapper",
+    "Beta 安装器必须使用 downloadBootstrapper WebView2 模式。"
+  );
 
   const result = {
     application: "UnicodeArt App",

@@ -58,6 +58,35 @@ try {
         throw '未找到候选 Windows 二进制；请移除 -SkipBuild 后重新执行。'
     }
 
+    # P2.5.3 只发布 NSIS 安装器。通过文件模式发现路径，避免把产品名或版本号重复硬编码到脚本中。
+    $installerDirectory = Join-Path $projectRoot 'src-tauri/target/release/bundle/nsis'
+    $installer = Get-ChildItem -LiteralPath $installerDirectory -Filter '*-setup.exe' -File -Recurse -ErrorAction SilentlyContinue |
+        Sort-Object LastWriteTimeUtc -Descending |
+        Select-Object -First 1
+    if (-not $installer) {
+        throw '未找到 NSIS 安装器；请确认 tauri.conf.json 的 bundle.targets 仅包含 nsis。'
+    }
+
+    $license = Join-Path $projectRoot 'LICENSE'
+    $notices = Join-Path $projectRoot 'THIRD_PARTY_NOTICES.md'
+    if (-not (Test-Path -LiteralPath $license) -or -not (Test-Path -LiteralPath $notices)) {
+        throw '候选发布必须包含 LICENSE 与 THIRD_PARTY_NOTICES.md。'
+    }
+
+    Copy-Item -LiteralPath $license -Destination (Join-Path $evidenceDirectory 'LICENSE') -Force
+    Copy-Item -LiteralPath $notices -Destination (Join-Path $evidenceDirectory 'THIRD_PARTY_NOTICES.md') -Force
+    $installerRelative = $installer.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
+    $releaseAssets = @(
+        [ordered]@{ kind = 'nsis-installer'; path = $installerRelative; sha256 = (Get-FileHash -Algorithm SHA256 $installer.FullName).Hash }
+        [ordered]@{ kind = 'license'; path = 'LICENSE'; sha256 = (Get-FileHash -Algorithm SHA256 $license).Hash }
+        [ordered]@{ kind = 'third-party-notices'; path = 'THIRD_PARTY_NOTICES.md'; sha256 = (Get-FileHash -Algorithm SHA256 $notices).Hash }
+        [ordered]@{ kind = 'node-runtime-sbom'; path = 'node-runtime.cyclonedx.json'; sha256 = (Get-FileHash -Algorithm SHA256 $nodeSbom).Hash }
+        [ordered]@{ kind = 'cargo-metadata'; path = 'cargo-metadata.json'; sha256 = (Get-FileHash -Algorithm SHA256 $cargoMetadata).Hash }
+    )
+    $releaseAssets | ConvertTo-Json | Set-Content -Encoding utf8 -Path (Join-Path $evidenceDirectory 'release-assets.json')
+    $releaseAssets | ForEach-Object { "$($_.sha256)  $($_.path)" } |
+        Set-Content -Encoding ascii -Path (Join-Path $evidenceDirectory 'SHA256SUMS.txt')
+
     $summary = [ordered]@{
         generatedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
         product = 'UnicodeArt App'
@@ -66,9 +95,13 @@ try {
         cargoLockSha256 = (Get-FileHash -Algorithm SHA256 src-tauri/Cargo.lock).Hash
         binary = 'src-tauri/target/release/tauri-uniart.exe'
         binarySha256 = (Get-FileHash -Algorithm SHA256 $binary).Hash
+        installer = $installerRelative
+        installerSha256 = (Get-FileHash -Algorithm SHA256 $installer.FullName).Hash
         releaseContract = 'release-contract.json'
         nodeSbom = 'node-runtime.cyclonedx.json'
         cargoMetadata = 'cargo-metadata.json'
+        releaseAssets = 'release-assets.json'
+        checksums = 'SHA256SUMS.txt'
     }
     $summary | ConvertTo-Json | Set-Content -Encoding utf8 -Path (Join-Path $evidenceDirectory 'summary.json')
 

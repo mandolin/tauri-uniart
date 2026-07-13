@@ -21,9 +21,10 @@ const config: ProjectConfig = {
   ratio: 2,
   visualFont: "Noto Sans SC"
 };
+const applicationVersion = "0.1.0-beta.1";
 
 test("文字项目可序列化并完整还原", () => {
-  const project = createTextProject("中文 UnicodeArt", config, "0.1.0");
+  const project = createTextProject("中文 UnicodeArt", config, applicationVersion);
   const restored = parseProject(serializeProject(project));
 
   assert.equal(restored.mode, "text");
@@ -38,7 +39,7 @@ test("便携图片项目可还原原始字节", () => {
     { mime: "image/png", name: "example.png" },
     bytes,
     config,
-    "0.1.0"
+    applicationVersion
   );
   const restored = parseProject(serializeProject(project));
 
@@ -51,7 +52,7 @@ test("便携图片严格限制在 10 MiB 内", () => {
   const tooLarge = new Uint8Array(MAX_PORTABLE_IMAGE_BYTES + 1);
 
   assert.throws(
-    () => createEmbeddedImageProject({ mime: "image/png", name: "large.png" }, tooLarge, config, "0.1.0"),
+    () => createEmbeddedImageProject({ mime: "image/png", name: "large.png" }, tooLarge, config, applicationVersion),
     ProjectValidationError
   );
 });
@@ -72,7 +73,7 @@ test("拒绝损坏的 Base64 与不一致字节长度", () => {
     storage: "embedded"
   };
   const invalidProject = {
-    application: { id: "unicodeart-app", version: "0.1.0" },
+    application: { id: "unicodeart-app", version: applicationVersion },
     config,
     mode: "image",
     schemaVersion: 1,
@@ -83,7 +84,7 @@ test("拒绝损坏的 Base64 与不一致字节长度", () => {
 });
 
 test("拒绝未知项目格式版本和多余属性", () => {
-  const project = createTextProject("test", config, "0.1.0");
+  const project = createTextProject("test", config, applicationVersion);
   const futureVersion = { ...project, schemaVersion: 2 };
   const unknownProperty = { ...project, unexpected: true };
 

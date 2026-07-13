@@ -57,7 +57,8 @@ interface ConverterState {
   workspaceSaveTimer?: number;
 }
 
-const APP_VERSION = "0.1.0";
+// 发布契约会校验此值与 package.json、Cargo.toml 和 tauri.conf.json 保持一致。
+const APP_VERSION = "0.1.0-beta.1";
 
 // P2.4 继续只通过 browser Core 转换；Tauri 插件仅承担显式选择后的文件访问。
 const app = requiredElement<HTMLDivElement>("#app");

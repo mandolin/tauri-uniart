@@ -38,7 +38,7 @@ jobs:
       - name: Verify source and release contract
         run: npm run check
 
-      - name: Build unbundled Windows candidate
+      - name: Build NSIS Windows candidate
         run: npm run tauri:build
 
       - name: Collect Compatible evidence
@@ -50,7 +50,7 @@ jobs:
         with:
           name: unicodeart-app-windows-${{ github.sha }}
           path: |
-            src-tauri/target/release/tauri-uniart.exe
+            src-tauri/target/release/bundle/nsis/*-setup.exe
             output/compatible-evidence/
           if-no-files-found: error
           retention-days: 14
