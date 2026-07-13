@@ -14,11 +14,15 @@ mise exec -- npm run evidence
 命令会先执行 TypeScript、项目格式测试和前端构建，再生成 Tauri Windows 可执行文件，并把以下文件写入
 被 Git 忽略的 `output/compatible-evidence/<timestamp>/`：
 
+- `release-contract.json`：应用版本、Core semver 范围和 lockfile 实际解析版本。
 - `node-runtime.cyclonedx.json`：Node 运行时依赖 SBOM。
 - `cargo-metadata.json`：完整 Rust 依赖、版本、来源和许可证字段快照。
 - `summary.json`：Node/Cargo lockfile 以及候选 `.exe` 的 SHA-256。
 
 `npm run evidence -- -SkipBuild` 仅适用于已完成同一工作树构建后的重新采集，不得替代正式候选构建。
+
+`npm run release:verify` 可单独检查版本契约：`package.json`、`Cargo.toml`、`tauri.conf.json` 和两个 lockfile
+必须指向同一应用与 Core 基线。该检查不访问网络，适合在本地和 CI 的干净安装后重复执行。
 
 ## 发布前人工复核
 
