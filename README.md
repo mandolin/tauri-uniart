@@ -1,34 +1,22 @@
-# Tauri UniArt
+# UnicodeArt App · 字素绘
 
-Tauri UniArt is an independent desktop application for the UnicodeArtJs
-ecosystem. Its goal is to provide a focused Unicode character art workstation
-with a native desktop shell.
+UnicodeArt App 是 UnicodeArtJs 生态的桌面 Unicode 字符画工作台。它以已发布的
+[`unicode-art-js`](https://www.npmjs.com/package/unicode-art-js) Core 为转换引擎，提供
+文字和图片到 Unicode 字符画的本地预览流程。
 
-## Relationship to UnicodeArtJs
+## 功能
 
-The application will use the published `unicode-art-js` Core package as its
-conversion engine. It does not duplicate the Core source code or change the
-licenses of the published UnicodeArtJs packages.
+- 将文字生成 Unicode 字符画。
+- 导入 PNG、JPEG、WebP、BMP 或 GIF 图片并生成字符画。
+- 调整高度、矩阵大小、宽高比和字符集。
+- 分别选择输入文字的视觉字体与输出字素字体。
+- 在转换过程中显示进度，并支持取消仍在执行的任务。
 
-## License and Distribution
+本应用不打包字体。字体选项以已安装的开源字体为优先候选，缺失时由系统字体回退机制处理。
 
-The source code in this repository is MIT licensed. Each application release
-will include the notices and license materials required by its real dependency
-graph and packaged runtime.
+## 本地运行
 
-The shared policy is documented in the
-[UnicodeArtJs compatible-project guide](https://github.com/mandolin/UnicodeArtJs/blob/main/docs/compatible-project-guide.md).
-
-## Status
-
-The repository contains the P1.1 secure desktop shell: a TypeScript/Vite window
-with a minimal Tauri capability set, no custom Rust commands, no opener plugin,
-and no release bundle. Conversion workflows, project files, and packaging are
-implemented in later stages. No application package has been released yet.
-
-## Development
-
-The repository uses mise to keep the Node and Rust toolchains reproducible:
+项目使用 [mise](https://mise.jdx.dev/) 固定 Node 与 Rust 工具链：
 
 ```powershell
 mise install
@@ -36,6 +24,19 @@ mise exec -- npm install
 mise exec -- npm run tauri:dev
 ```
 
-Use `mise exec -- npm run check` for TypeScript and frontend checks. The
-`tauri:build` command intentionally uses `--no-bundle` until the Compatible
-distribution gate has approved an actual installer configuration.
+开发验证可执行：
+
+```powershell
+mise exec -- npm run check
+mise exec -- npm run tauri:build
+```
+
+`tauri:build` 当前仅生成可执行文件，不生成安装器。
+
+## 许可与边界
+
+本仓库自有源码采用 MIT 许可。桌面应用是独立分发项目，发布时会随实际依赖图和产物提供相应的
+NOTICE、SBOM 与许可证材料；它不会改变 UnicodeArtJs Core 包的许可证。
+
+详细的跨项目边界见
+[UnicodeArtJs 兼容项目指南](https://github.com/mandolin/UnicodeArtJs/blob/main/docs/compatible-project-guide.md)。

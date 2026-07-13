@@ -1,5 +1,5 @@
 :root {
-  font-family: "Microsoft YaHei UI", "Noto Sans SC", system-ui, sans-serif;
+  font-family: "Noto Sans SC", "Source Han Sans SC", "LXGW WenKai", system-ui, sans-serif;
   color: #172121;
   background: #f5f7f7;
   font-synthesis: none;
@@ -21,6 +21,14 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #006d77;
+  outline-offset: 2px;
 }
 
 .app-shell {
@@ -51,8 +59,8 @@ select {
 
 .brand span,
 .runtime-status,
-.canvas-status,
-.eyebrow {
+.result-meta,
+.progress {
   color: #647373;
   font-size: 12px;
 }
@@ -65,35 +73,157 @@ select {
 .workspace {
   display: grid;
   min-height: 0;
-  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  grid-template-columns: minmax(252px, 304px) minmax(0, 1fr);
 }
 
-.sidebar {
+.control-panel {
+  min-height: 0;
+  overflow-y: auto;
   border-right: 1px solid #cfd8d8;
-  padding: 24px 20px;
   background: #edf2f2;
 }
 
-.eyebrow {
-  margin: 0 0 8px;
-  color: #006d77;
+.mode-section,
+.control-section {
+  border-bottom: 1px solid #d6dfdf;
+  padding: 16px;
+}
+
+.mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.mode-switch button,
+.action-row button {
+  min-height: 34px;
+  border: 1px solid #9daead;
+  background: #ffffff;
+  color: #263737;
+  cursor: pointer;
+}
+
+.mode-switch button:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.mode-switch button:last-child {
+  border-left: 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.mode-switch button[aria-pressed="true"] {
+  border-color: #006d77;
+  background: #006d77;
+  color: #ffffff;
+}
+
+.control-section {
+  display: grid;
+  gap: 10px;
+}
+
+.control-section > label,
+.field-grid label,
+.font-controls label {
+  display: grid;
+  gap: 6px;
+  color: #405151;
+  font-size: 12px;
   font-weight: 700;
 }
 
-.sidebar h1 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
+textarea,
+input,
+select {
+  width: 100%;
+  border: 1px solid #b7c4c4;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #172121;
 }
 
-.sidebar-rule {
-  width: 42px;
-  height: 3px;
-  margin-top: 18px;
-  background: #e29578;
+textarea {
+  min-height: 116px;
+  resize: vertical;
+  padding: 9px;
+  line-height: 1.45;
 }
 
-.canvas-area {
+input,
+select {
+  min-height: 34px;
+  padding: 5px 8px;
+}
+
+.image-source {
+  display: grid;
+  gap: 7px;
+}
+
+.image-source > label {
+  color: #405151;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.file-name {
+  overflow: hidden;
+  color: #607070;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.font-controls {
+  gap: 12px;
+}
+
+.action-section {
+  position: sticky;
+  bottom: 0;
+  background: #edf2f2;
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.action-row button {
+  border-radius: 5px;
+}
+
+.action-row button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.primary-action {
+  border-color: #006d77 !important;
+  background: #006d77 !important;
+  color: #ffffff !important;
+}
+
+.secondary-action:not(:disabled):hover,
+.mode-switch button:not([aria-pressed="true"]):hover {
+  border-color: #e29578;
+  background: #fff8f3;
+}
+
+.progress {
+  min-height: 18px;
+  overflow-wrap: anywhere;
+}
+
+.output-area {
   display: grid;
   min-width: 0;
   min-height: 0;
@@ -101,7 +231,7 @@ select {
   background: #ffffff;
 }
 
-.canvas-header {
+.output-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -111,29 +241,51 @@ select {
   font-size: 14px;
 }
 
-.canvas-status {
-  color: #006d77;
-}
-
-.canvas-empty {
-  display: grid;
-  place-items: center;
+.output-frame {
+  min-width: 0;
   min-height: 0;
-  margin: 20px;
-  border: 1px dashed #b9c7c7;
-  color: #607070;
-  font-size: 15px;
+  overflow: auto;
+  padding: 20px;
 }
 
-@media (max-width: 700px) {
+#art-output {
+  min-width: max-content;
+  min-height: 100%;
+  margin: 0;
+  border: 1px solid #d6dfdf;
+  border-radius: 5px;
+  padding: 18px;
+  background: #fbfcfc;
+  color: #172121;
+  font-size: 13px;
+  line-height: 1.2;
+  tab-size: 4;
+  white-space: pre;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
   .workspace {
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, auto) minmax(0, 1fr);
   }
 
-  .sidebar {
+  .control-panel {
+    max-height: none;
+    overflow: visible;
     border-right: 0;
     border-bottom: 1px solid #cfd8d8;
-    padding: 16px 20px;
+  }
+
+  .action-section {
+    position: static;
+  }
+
+  .output-frame {
+    min-height: 380px;
+    padding: 12px;
   }
 }
