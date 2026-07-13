@@ -21,5 +21,21 @@ The shared policy is documented in the
 
 ## Status
 
-The repository is ready for the initial Tauri design and implementation work.
-No application package has been released yet.
+The repository contains the P1.1 secure desktop shell: a TypeScript/Vite window
+with a minimal Tauri capability set, no custom Rust commands, no opener plugin,
+and no release bundle. Conversion workflows, project files, and packaging are
+implemented in later stages. No application package has been released yet.
+
+## Development
+
+The repository uses mise to keep the Node and Rust toolchains reproducible:
+
+```powershell
+mise install
+mise exec -- npm install
+mise exec -- npm run tauri:dev
+```
+
+Use `mise exec -- npm run check` for TypeScript and frontend checks. The
+`tauri:build` command intentionally uses `--no-bundle` until the Compatible
+distribution gate has approved an actual installer configuration.

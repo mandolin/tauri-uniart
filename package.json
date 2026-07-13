@@ -1,0 +1,25 @@
+{
+  "name": "tauri-uniart",
+  "private": true,
+  "version": "0.1.0",
+  "description": "UnicodeArt App desktop workspace built with Tauri.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build --no-bundle"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.11.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
+    "vite": "^6.0.3",
+    "typescript": "~5.6.2"
+  }
+}

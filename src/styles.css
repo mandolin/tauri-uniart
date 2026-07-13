@@ -1,0 +1,139 @@
+:root {
+  font-family: "Microsoft YaHei UI", "Noto Sans SC", system-ui, sans-serif;
+  color: #172121;
+  background: #f5f7f7;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  display: grid;
+  min-height: 100vh;
+  grid-template-rows: 58px minmax(0, 1fr);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #cfd8d8;
+  padding: 0 20px;
+  background: #ffffff;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.brand strong {
+  color: #006d77;
+  font-size: 17px;
+}
+
+.brand span,
+.runtime-status,
+.canvas-status,
+.eyebrow {
+  color: #647373;
+  font-size: 12px;
+}
+
+.runtime-status {
+  border-left: 3px solid #e29578;
+  padding-left: 8px;
+}
+
+.workspace {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+}
+
+.sidebar {
+  border-right: 1px solid #cfd8d8;
+  padding: 24px 20px;
+  background: #edf2f2;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #006d77;
+  font-weight: 700;
+}
+
+.sidebar h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sidebar-rule {
+  width: 42px;
+  height: 3px;
+  margin-top: 18px;
+  background: #e29578;
+}
+
+.canvas-area {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: 44px minmax(0, 1fr);
+  background: #ffffff;
+}
+
+.canvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #dce4e4;
+  padding: 0 20px;
+  color: #314242;
+  font-size: 14px;
+}
+
+.canvas-status {
+  color: #006d77;
+}
+
+.canvas-empty {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  margin: 20px;
+  border: 1px dashed #b9c7c7;
+  color: #607070;
+  font-size: 15px;
+}
+
+@media (max-width: 700px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid #cfd8d8;
+    padding: 16px 20px;
+  }
+}
