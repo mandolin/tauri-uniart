@@ -45,6 +45,7 @@ mise exec -- npm run tauri:build
 再把候选安装器与证据作为短期 Actions artifact 保存。该工作流不会创建 GitHub Release，也不会触发自动更新。
 
 Beta 的安装、WebView2、未签名提示、项目兼容和问题反馈说明见 [Windows Beta 使用说明](docs/windows-beta.md)。
+维护者可按 [GitHub Release 资产准备](docs/github-release-assets.md) 生成安装器、哈希和依赖材料的同版本上传目录。
 
 ## 项目与文件访问
 
