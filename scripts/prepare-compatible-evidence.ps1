@@ -58,13 +58,14 @@ try {
         throw '未找到候选 Windows 二进制；请移除 -SkipBuild 后重新执行。'
     }
 
-    # P2.5.3 只发布 NSIS 安装器。通过文件模式发现路径，避免把产品名或版本号重复硬编码到脚本中。
+    # P2.5.3 只发布当前版本的 NSIS 安装器。升级夹具也会写入 bundle 目录，故不能简单选择最新文件。
     $installerDirectory = Join-Path $projectRoot 'src-tauri/target/release/bundle/nsis'
-    $installer = Get-ChildItem -LiteralPath $installerDirectory -Filter '*-setup.exe' -File -Recurse -ErrorAction SilentlyContinue |
+    $applicationVersion = (Get-Content package.json -Raw | ConvertFrom-Json).version
+    $installer = Get-ChildItem -LiteralPath $installerDirectory -Filter "*_$applicationVersion`_*-setup.exe" -File -Recurse -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTimeUtc -Descending |
         Select-Object -First 1
     if (-not $installer) {
-        throw '未找到 NSIS 安装器；请确认 tauri.conf.json 的 bundle.targets 仅包含 nsis。'
+        throw "未找到版本 $applicationVersion 的 NSIS 安装器；请确认 tauri.conf.json 的 bundle.targets 仅包含 nsis。"
     }
 
     $license = Join-Path $projectRoot 'LICENSE'
@@ -90,7 +91,7 @@ try {
     $summary = [ordered]@{
         generatedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
         product = 'UnicodeArt App'
-        version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+        version = $applicationVersion
         npmLockSha256 = (Get-FileHash -Algorithm SHA256 package-lock.json).Hash
         cargoLockSha256 = (Get-FileHash -Algorithm SHA256 src-tauri/Cargo.lock).Hash
         binary = 'src-tauri/target/release/tauri-uniart.exe'

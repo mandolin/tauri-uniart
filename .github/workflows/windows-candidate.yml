@@ -41,6 +41,28 @@ jobs:
       - name: Build NSIS Windows candidate
         run: npm run tauri:build
 
+      - name: Verify silent NSIS upgrade and uninstall
+        shell: pwsh
+        run: |
+          $fixtureVersion = '0.0.0-upgrade-fixture'
+          $targetVersion = node -p "require('./package.json').version"
+          npm run installer:fixture -- -FixtureVersion $fixtureVersion
+          $initialInstaller = Get-ChildItem -LiteralPath src-tauri/target/release/bundle/nsis -Filter "*_$fixtureVersion`_*-setup.exe" -File |
+            Sort-Object LastWriteTimeUtc -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+          $targetInstaller = Get-ChildItem -LiteralPath src-tauri/target/release/bundle/nsis -Filter "*_$targetVersion`_*-setup.exe" -File |
+            Sort-Object LastWriteTimeUtc -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+          if (-not $initialInstaller -or -not $targetInstaller) {
+            throw '未找到升级烟雾测试所需的 NSIS 安装器。'
+          }
+          npm run installer:smoke -- `
+            -InitialInstaller $initialInstaller `
+            -ExpectedInitialVersion $fixtureVersion `
+            -TargetInstaller $targetInstaller `
+            -ExpectedTargetVersion $targetVersion `
+            -ResultPath output/installer-smoke/windows-runner.json
+
       - name: Collect Compatible evidence
         shell: pwsh
         run: ./scripts/prepare-compatible-evidence.ps1 -SkipBuild
@@ -52,5 +74,6 @@ jobs:
           path: |
             src-tauri/target/release/bundle/nsis/*-setup.exe
             output/compatible-evidence/
+            output/installer-smoke/
           if-no-files-found: error
           retention-days: 14
