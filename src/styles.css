@@ -40,6 +40,7 @@ select:focus-visible {
 .topbar {
   display: flex;
   align-items: center;
+  gap: 16px;
   justify-content: space-between;
   border-bottom: 1px solid #cfd8d8;
   padding: 0 20px;
@@ -68,6 +69,37 @@ select:focus-visible {
 .runtime-status {
   border-left: 3px solid #e29578;
   padding-left: 8px;
+}
+
+.top-actions,
+.output-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.top-actions button,
+.output-actions button,
+.control-button {
+  min-height: 32px;
+  border: 1px solid #9daead;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #263737;
+  cursor: pointer;
+  padding: 5px 9px;
+}
+
+.top-actions button:hover,
+.output-actions button:not(:disabled):hover,
+.control-button:hover {
+  border-color: #006d77;
+  background: #f3faf9;
+}
+
+.output-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
 }
 
 .workspace {
@@ -167,6 +199,12 @@ select {
   font-weight: 700;
 }
 
+.field-label {
+  color: #405151;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .file-name {
   overflow: hidden;
   color: #607070;
@@ -234,11 +272,19 @@ select {
 .output-header {
   display: flex;
   align-items: center;
+  gap: 12px;
   justify-content: space-between;
   border-bottom: 1px solid #dce4e4;
   padding: 0 20px;
   color: #314242;
   font-size: 14px;
+}
+
+.output-title {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 10px;
 }
 
 .output-frame {
@@ -268,6 +314,26 @@ select {
 }
 
 @media (max-width: 760px) {
+  .app-shell {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .top-actions {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .runtime-status {
+    margin-left: auto;
+  }
+
   .workspace {
     grid-template-columns: 1fr;
     grid-template-rows: minmax(0, auto) minmax(0, 1fr);
@@ -287,5 +353,14 @@ select {
   .output-frame {
     min-height: 380px;
     padding: 12px;
+  }
+
+  .output-header {
+    min-height: 44px;
+    padding: 7px 12px;
+  }
+
+  .output-actions {
+    overflow-x: auto;
   }
 }
